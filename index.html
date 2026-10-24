@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aplicación para organizar películas y series favoritas.">
+    <title>Mi colección | Películas y series</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <div>
+                <p class="eyebrow">ACTIVIDAD 3 · PROGRAMACIÓN WEB</p>
+                <h1>Mi colección</h1>
+                <p class="subtitle">Una lista personal para registrar y organizar películas y series favoritas.</p>
+            </div>
+            <span class="header-note">Biblioteca personal</span>
+        </div>
+    </header>
+    <main class="container main-content">
+        <section class="stats" aria-label="Resumen de la colección">
+            <div class="stat-card">
+                <span class="stat-label">Títulos guardados</span>
+                <strong id="total-count" class="stat-number">0</strong>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Pendientes</span>
+                <strong id="pending-count" class="stat-number">0</strong>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Terminados</span>
+                <strong id="finished-count" class="stat-number">0</strong>
+            </div>
+        </section>
+        <section class="panel form-panel" aria-labelledby="form-heading">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">TU LISTA</p>
+                    <h2 id="form-heading">Agregar un título</h2>
+                </div>
+                <p class="section-hint">Todos los campos son obligatorios.</p>
+            </div>
+            <form id="media-form" novalidate>
+                <input type="hidden" id="editing-id">
+
+                <div class="form-grid">
+                    <div class="form-field field-title">
+                        <label for="title">Título <span aria-hidden="true">*</span></label>
+                        <input type="text" id="title" name="title" maxlength="100"
+                            placeholder="Ej. Interestelar" autocomplete="off" required
+                            aria-describedby="title-error">
+                        <small class="field-error" id="title-error"></small>
+                    </div>
+                    <div class="form-field">
+                        <label for="type">Tipo <span aria-hidden="true">*</span></label>
+                        <select id="type" name="type" required aria-describedby="type-error">
+                            <option value="" disabled selected>Selecciona un tipo</option>
+                            <option value="pelicula">Película</option>
+                            <option value="serie">Serie</option>
+                        </select>
+                        <small class="field-error" id="type-error"></small>
+                    </div>
+                    <div class="form-field">
+                        <label for="genre">Género <span aria-hidden="true">*</span></label>
+                        <select id="genre" name="genre" required aria-describedby="genre-error">
+                            <option value="" disabled selected>Selecciona un género</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Acción">Acción</option>
+                            <option value="Animación">Animación</option>
+                            <option value="Aventura">Aventura</option>
+                            <option value="Ciencia ficción">Ciencia ficción</option>
+                            <option value="Comedia">Comedia</option>
+                            <option value="Documental">Documental</option>
+                            <option value="Fantasía">Fantasía</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Suspenso">Suspenso</option>
+                            <option value="Terror">Terror</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                        <small class="field-error" id="genre-error"></small>
+                    </div>
+                    <div class="form-field">
+                        <label for="year">Año de estreno <span aria-hidden="true">*</span></label>
+                        <input type="number" id="year" name="year" min="1888"
+                            placeholder="Ej. 2023" inputmode="numeric" step="1" required
+                            aria-describedby="year-error">
+                        <small class="field-error" id="year-error"></small>
+                    </div>
+                    <div class="form-field">
+                        <label for="status">Estado <span aria-hidden="true">*</span></label>
+                        <select id="status" name="status" required aria-describedby="status-error">
+                            <option value="" disabled selected>Selecciona un estado</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en-curso">En curso</option>
+                            <option value="terminada">Vista / Terminada</option>
+                        </select>
+                        <small class="field-error" id="status-error"></small>
+                    </div>
+                    <div class="form-field">
+                        <label for="rating">Valoración personal <span aria-hidden="true">*</span></label>
+                        <select id="rating" name="rating" required aria-describedby="rating-error">
+                            <option value="" disabled selected>Selecciona una valoración</option>
+                            <option value="1">1 de 5</option>
+                            <option value="2">2 de 5</option>
+                            <option value="3">3 de 5</option>
+                            <option value="4">4 de 5</option>
+                            <option value="5">5 de 5</option>
+                        </select>
+                        <small class="field-error" id="rating-error"></small>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="button button-primary" id="submit-button">
+                        Agregar a mi lista
+                    </button>
+                    <button type="button" class="button button-secondary" id="cancel-edit-button" hidden>
+                        Cancelar edición
+                    </button>
+                    <p id="form-message" class="form-message" role="status" aria-live="polite"></p>
+                </div>
+            </form>
+        </section>
+        <section class="collection-section" aria-labelledby="collection-heading">
+            <div class="section-heading collection-title-row">
+                <div>
+                    <p class="eyebrow">REGISTROS</p>
+                    <h2 id="collection-heading">Mi lista</h2>
+                </div>
+                <p id="results-count" class="results-count">0 resultados</p>
+            </div>
+            <div class="filters panel" role="search" aria-label="Buscar y filtrar títulos">
+                <div class="form-field search-field">
+                    <label for="search">Buscar por título</label>
+                    <input type="search" id="search" placeholder="Escribe un título..." autocomplete="off">
+                </div>
+                <div class="form-field">
+                    <label for="filter-type">Tipo</label>
+                    <select id="filter-type">
+                        <option value="todos">Todos</option>
+                        <option value="pelicula">Películas</option>
+                        <option value="serie">Series</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="filter-status">Estado</label>
+                    <select id="filter-status">
+                        <option value="todos">Todos</option>
+                        <option value="pendiente">Pendientes</option>
+                        <option value="en-curso">En curso</option>
+                        <option value="terminada">Vistas / Terminadas</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="filter-genre">Género</label>
+                    <select id="filter-genre">
+                        <option value="todos">Todos</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Acción">Acción</option>
+                        <option value="Animación">Animación</option>
+                        <option value="Aventura">Aventura</option>
+                        <option value="Ciencia ficción">Ciencia ficción</option>
+                        <option value="Comedia">Comedia</option>
+                        <option value="Documental">Documental</option>
+                        <option value="Fantasía">Fantasía</option>
+                        <option value="Romance">Romance</option>
+                        <option value="Suspenso">Suspenso</option>
+                        <option value="Terror">Terror</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="form-field sort-field">
+                    <label for="sort-by">Ordenar</label>
+                    <select id="sort-by">
+                        <option value="recent">Más recientes agregados</option>
+                        <option value="title-asc">Título: A a Z</option>
+                        <option value="title-desc">Título: Z a A</option>
+                        <option value="year-desc">Año: más nuevo</option>
+                        <option value="year-asc">Año: más antiguo</option>
+                    </select>
+                </div>
+                <div class="filter-action">
+                    <button type="button" class="button button-secondary button-full" id="clear-filters-button">
+                        Limpiar filtros
+                    </button>
+                </div>
+            </div>
+            <div id="media-list" class="media-list" aria-live="polite"></div>
+        </section>
+    </main>
+    <footer class="site-footer">
+        <div class="container">
+            <p>Mi colección · Actividad 3 de Programación Web</p>
+        </div>
+    </footer>
+</body>
+</html>
